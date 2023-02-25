@@ -17,12 +17,14 @@ class SAXHandler extends DefaultHandler {
 
     List<XmlRow> xmlRowList = new ArrayList<>();
     XmlRow xmlRow = null;
-    String content = null;
+    private StringBuilder currentValue = new StringBuilder();
 
     @Override
     //Triggered when the start of tag is found.
     public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
+        // reset the tag value
+        currentValue.setLength(0);
         switch (qName) {
             //Create a new Row object when the start tag is found
             case "Row":
@@ -39,7 +41,7 @@ class SAXHandler extends DefaultHandler {
                 xmlRowList.add(xmlRow);
                 break;
             case "Data":
-                xmlRow.cellList.add(content);
+                xmlRow.cellList.add(currentValue.toString());
                 break;
         }
     }
@@ -47,6 +49,6 @@ class SAXHandler extends DefaultHandler {
     @Override
     public void characters(char[] ch, int start, int length)
             throws SAXException {
-        content = String.copyValueOf(ch, start, length).trim();
+        currentValue.append(ch, start, length);
     }
 }
